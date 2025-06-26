@@ -10,7 +10,7 @@ def save_genesis(genesis):
         json.dump(genesis, f, indent=2)
 
 def update_genesis(inflation_rate_change, inflation_max, inflation_min, goal_bonded, blocks_per_year,
-                   mint_denom, voting_period, max_deposit_period, max_validators, max_gas, time_iota_ms):
+                   mint_denom, voting_period, expedited_voting_period, max_deposit_period, max_validators, max_gas, time_iota_ms):
     
     genesis = load_genesis()
 
@@ -33,6 +33,7 @@ def update_genesis(inflation_rate_change, inflation_max, inflation_min, goal_bon
 
     gov_params = genesis["app_state"]["gov"]["params"]
     gov_params["voting_period"] = voting_period
+    gov_params["expedited_voting_period"] = expedited_voting_period
     gov_params["max_deposit_period"] = max_deposit_period
 
     if gov_params.get("min_deposit") and len(gov_params["min_deposit"]) > 0:
@@ -80,9 +81,10 @@ def update_genesis(inflation_rate_change, inflation_max, inflation_min, goal_bon
     return genesis
 
 
-def write_env_file(num_nodes, chain_id, key_name, moniker_prefix, validator_ips, keyring_passwords):
+def write_env_file(num_nodes, chain_id, key_name, moniker_prefix, validator_ips, keyring_passwords, INITIAL_VALIDATOR_TOKEN_RAW, mint_denom):
     ip_string = " ".join(validator_ips)
     password_string = " ".join(keyring_passwords)
+    validator_stake = f"{INITIAL_VALIDATOR_TOKEN_RAW}{mint_denom}"
 
     env_content = f"""NUM_NODES={num_nodes}
 CHAINID={chain_id}
@@ -90,13 +92,14 @@ KEY={key_name}
 MONIKER_PREFIX={moniker_prefix}
 KEYRING_PASSWORDS=({password_string})
 VALIDATOR_IPS=({ip_string})
+VALIDATOR_STAKE={validator_stake}
 """
 
     with open("scripts/env.sh", "w") as f:
         f.write(env_content)
 
-def run_init_script(num_nodes, chain_id, key_name, moniker_prefix, validator_ips, keyring_passwords):
-    write_env_file(num_nodes, chain_id, key_name, moniker_prefix, validator_ips, keyring_passwords)
+def run_init_script(num_nodes, chain_id, key_name, moniker_prefix, validator_ips, keyring_passwords, INITIAL_VALIDATOR_TOKEN_RAW, mint_denom):
+    write_env_file(num_nodes, chain_id, key_name, moniker_prefix, validator_ips, keyring_passwords, INITIAL_VALIDATOR_TOKEN_RAW, mint_denom)
 
     try:
         result = subprocess.run(["bash", "scripts/init.sh"], capture_output=True, text=True)
