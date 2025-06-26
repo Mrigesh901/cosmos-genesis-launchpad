@@ -2,7 +2,7 @@ from decimal import Decimal, getcontext
 
 getcontext().prec = 18
 
-def simulate_tokenomics(inflation_rate_change, inflation_max, inflation_min, goal_bonded, blocks_per_year, max_supply, years=10):
+def simulate_tokenomics(inflation_rate_change, inflation_max, inflation_min, goal_bonded, blocks_per_year, max_supply, years=20):
     # Ensure all inputs are Decimals
     inflation_rate_change = Decimal(str(inflation_rate_change))
     inflation_max = Decimal(str(inflation_max))

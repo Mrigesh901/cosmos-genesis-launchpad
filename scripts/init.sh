@@ -28,7 +28,9 @@ echo "$KEY_OUTPUT" > "$SCRIPT_DIR/${MONIKER_PREFIX}1/key_info.json"
 
 VAL_ADDRESS=$(echo -e "${VAL_PASSWORD}" | cronosd keys show "$VAL_KEY_NAME" -a --keyring-backend $KEYRING --home "$FIRST_NODE_HOME")
 
-cronosd genesis add-genesis-account "$VAL_ADDRESS" 10500000000000000000000000aauth --home "$FIRST_NODE_HOME"
+# cronosd genesis add-genesis-account "$VAL_ADDRESS" 10500000000000000000000000aauth --home "$FIRST_NODE_HOME"
+cronosd genesis add-genesis-account "$VAL_ADDRESS" "$VALIDATOR_STAKE" --home "$FIRST_NODE_HOME"
+
 echo "Validator 1 address: $VAL_ADDRESS"
 
 setupNode() {
